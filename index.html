@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>TRiCKY!</title>
 
 <style>
@@ -11,231 +11,396 @@
   -webkit-tap-highlight-color:transparent;
 }
 
-body{
+html,body{
   margin:0;
-  background:#10131c;
-  color:white;
-  font-family:Arial,sans-serif;
+  width:100%;
+  height:100%;
   overflow:hidden;
+  background:#090d18;
+  font-family:Arial,sans-serif;
   touch-action:none;
 }
 
 #game{
   position:relative;
-  width:100vw;
-  height:100vh;
-  max-width:900px;
-  margin:auto;
+  width:100%;
+  height:100%;
   overflow:hidden;
   background:
-    linear-gradient(#252b3d 0%,#171b29 70%,#10131c 70%);
+    radial-gradient(circle at 50% 20%,#303b5d 0,#1c2439 38%,#0d1220 100%);
 }
 
+/* خلفية */
+.stars{
+  position:absolute;
+  inset:0;
+  opacity:.45;
+  background-image:
+    radial-gradient(circle,#fff 1px,transparent 1px),
+    radial-gradient(circle,#fff 1px,transparent 1px);
+  background-size:90px 90px,130px 130px;
+  background-position:10px 20px,50px 70px;
+}
+
+.moon{
+  position:absolute;
+  width:90px;
+  height:90px;
+  border-radius:50%;
+  background:#ffe8a3;
+  box-shadow:0 0 35px #ffe8a366;
+  top:90px;
+  left:12%;
+}
+
+/* الشريط العلوي */
 .top{
   position:absolute;
-  top:12px;
-  left:12px;
-  right:12px;
+  top:15px;
+  left:15px;
+  right:15px;
+  height:58px;
   display:flex;
-  justify-content:space-between;
   align-items:center;
-  z-index:20;
+  justify-content:space-between;
+  z-index:50;
+  direction:ltr;
 }
 
 .logo{
-  font-size:25px;
+  font-size:27px;
   font-weight:900;
+  color:white;
   letter-spacing:2px;
+  text-shadow:0 4px 15px #000;
+}
+
+.logo span{
+  color:#ffcc4d;
 }
 
 .level{
+  direction:ltr;
+  padding:10px 17px;
+  border-radius:18px;
   background:#ffffff18;
-  border:1px solid #ffffff25;
-  padding:8px 14px;
-  border-radius:20px;
+  border:1px solid #ffffff35;
+  backdrop-filter:blur(10px);
+  color:white;
   font-weight:bold;
+}
+
+/* عالم اللعبة */
+#camera{
+  position:absolute;
+  left:0;
+  top:0;
+  height:100%;
+  width:100%;
 }
 
 #world{
   position:absolute;
+  width:2400px;
+  height:100%;
   left:0;
   top:0;
-  width:1800px;
-  height:100%;
-  transition:transform .08s linear;
+  transition:transform .05s linear;
 }
 
+/* الأرض والمنصات */
 .platform{
   position:absolute;
-  background:#444c62;
-  border-top:5px solid #69748e;
-  border-radius:4px;
+  background:linear-gradient(#596782,#343d55);
+  border-top:6px solid #7786a5;
+  border-radius:7px;
+  box-shadow:0 10px 20px #0006;
 }
 
+.platform:after{
+  content:"";
+  position:absolute;
+  left:0;
+  right:0;
+  top:8px;
+  height:2px;
+  background:#ffffff15;
+}
+
+/* أشواك */
 .spike{
   position:absolute;
   width:0;
   height:0;
-  border-left:16px solid transparent;
-  border-right:16px solid transparent;
-  border-bottom:30px solid #ef476f;
+  border-left:17px solid transparent;
+  border-right:17px solid transparent;
+  border-bottom:34px solid #ff4d72;
+  filter:drop-shadow(0 5px 4px #0008);
 }
 
+/* عملات */
 .coin{
   position:absolute;
-  width:22px;
-  height:22px;
+  width:25px;
+  height:25px;
   border-radius:50%;
-  background:#ffd166;
-  box-shadow:0 0 15px #ffd16688;
+  background:#ffd34e;
+  border:4px solid #ffef9a;
+  box-shadow:0 0 20px #ffd34e99;
+  animation:coin 1s infinite alternate;
 }
 
+@keyframes coin{
+  from{transform:scale(.9)}
+  to{transform:scale(1.1)}
+}
+
+/* الباب */
+.door{
+  position:absolute;
+  width:65px;
+  height:88px;
+  border-radius:12px 12px 4px 4px;
+  background:linear-gradient(135deg,#55f59a,#1cae67);
+  border:5px solid #087342;
+  box-shadow:0 0 25px #35e98b55;
+}
+
+.door:before{
+  content:"";
+  position:absolute;
+  width:12px;
+  height:12px;
+  border-radius:50%;
+  background:#0b5735;
+  right:9px;
+  top:39px;
+}
+
+.door:after{
+  content:"EXIT";
+  position:absolute;
+  top:-27px;
+  left:5px;
+  color:#73f6aa;
+  font-size:11px;
+  font-weight:bold;
+}
+
+/* الشخصية */
 #player{
   position:absolute;
-  width:34px;
-  height:42px;
-  background:#4cc9f0;
-  border-radius:9px 9px 5px 5px;
-  box-shadow:0 5px 0 #168aad;
-  z-index:10;
+  width:42px;
+  height:50px;
+  border-radius:11px 11px 8px 8px;
+  background:linear-gradient(135deg,#55ddff,#28a8dc);
+  border:3px solid #8cecff;
+  box-shadow:0 7px 0 #11739d,0 0 20px #36cfff55;
+  z-index:20;
 }
 
 #player:before{
   content:"";
   position:absolute;
-  width:6px;
-  height:6px;
-  background:#111;
+  width:7px;
+  height:7px;
   border-radius:50%;
-  left:7px;
-  top:11px;
-  box-shadow:14px 0 #111;
+  background:#111827;
+  left:8px;
+  top:13px;
+  box-shadow:17px 0 #111827;
 }
 
 #player:after{
   content:"";
   position:absolute;
-  width:13px;
-  height:3px;
-  background:#111;
-  left:10px;
-  top:25px;
+  width:15px;
+  height:4px;
+  background:#111827;
   border-radius:5px;
+  left:11px;
+  top:30px;
 }
 
-.door{
+/* علامة الخدعة */
+.trick{
   position:absolute;
-  width:55px;
-  height:75px;
-  background:#55d68a;
-  border:5px solid #2b8a57;
-  border-radius:8px 8px 2px 2px;
-  z-index:5;
+  color:#ffe27a;
+  font-size:14px;
+  font-weight:bold;
+  text-shadow:0 3px 5px #000;
 }
 
-.door:after{
-  content:"";
+/* الهدف */
+.goalText{
   position:absolute;
-  width:7px;
-  height:7px;
-  background:#183b2b;
-  border-radius:50%;
-  right:8px;
-  top:35px;
-}
-
-.warning{
-  position:absolute;
-  color:#ffdf6b;
+  color:#8dffc0;
   font-weight:bold;
   font-size:13px;
-  opacity:.8;
 }
 
+/* أزرار التحكم */
 .controls{
   position:absolute;
-  bottom:22px;
-  left:20px;
-  right:20px;
+  bottom:18px;
+  left:18px;
+  right:18px;
   display:flex;
   justify-content:space-between;
   align-items:end;
-  z-index:30;
+  direction:ltr;
+  z-index:60;
 }
 
-.arrows{
+.move{
   display:flex;
   gap:12px;
 }
 
 .btn{
-  width:65px;
-  height:65px;
-  border:0;
-  border-radius:18px;
-  background:#ffffff18;
+  width:67px;
+  height:67px;
+  border-radius:20px;
+  border:1px solid #ffffff35;
+  background:#182033dd;
   color:white;
-  font-size:27px;
+  font-size:29px;
   font-weight:bold;
-  border:1px solid #ffffff25;
-  backdrop-filter:blur(8px);
+  box-shadow:0 7px 20px #0008;
+  backdrop-filter:blur(10px);
 }
 
 .btn:active{
-  transform:scale(.92);
-  background:#ffffff30;
+  transform:scale(.91);
+  background:#26324ddd;
 }
 
 .jump{
   width:78px;
   height:78px;
   border-radius:50%;
-  background:#4cc9f0;
-  color:#10131c;
-  box-shadow:0 5px 0 #168aad;
+  background:#ffcc4d;
+  color:#111827;
+  border:none;
+  box-shadow:0 7px 0 #b47d14,0 12px 25px #0008;
 }
 
+/* نافذة النتيجة */
 #message{
   position:absolute;
   inset:0;
-  background:#080a10dd;
   display:none;
-  justify-content:center;
   align-items:center;
-  text-align:center;
+  justify-content:center;
   z-index:100;
+  background:#050812d9;
+  backdrop-filter:blur(7px);
 }
 
 .card{
-  width:min(90%,380px);
-  background:#171b29;
-  border:1px solid #ffffff18;
+  width:min(88%,390px);
+  padding:30px 25px;
   border-radius:25px;
-  padding:30px;
-  box-shadow:0 20px 60px #0008;
+  background:#171e31;
+  border:1px solid #ffffff25;
+  text-align:center;
+  box-shadow:0 25px 70px #000b;
 }
 
 .card h1{
   margin:0 0 10px;
-  font-size:34px;
+  font-size:35px;
 }
 
 .card p{
-  color:#b8bfd0;
+  color:#c6cede;
   line-height:1.7;
 }
 
 .card button{
   border:0;
-  background:#4cc9f0;
   padding:14px 30px;
   border-radius:14px;
-  font-size:17px;
+  background:#ffcc4d;
+  color:#111827;
   font-weight:bold;
+  font-size:17px;
 }
 
-@media(min-width:700px){
-  .btn{width:75px;height:75px}
+/* شاشة البداية */
+#start{
+  position:absolute;
+  inset:0;
+  z-index:90;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#080c17e8;
+  backdrop-filter:blur(8px);
+}
+
+.startCard{
+  text-align:center;
+  width:min(90%,420px);
+}
+
+.bigLogo{
+  font-size:55px;
+  font-weight:1000;
+  color:white;
+  letter-spacing:3px;
+  text-shadow:0 8px 30px #000;
+}
+
+.bigLogo span{
+  color:#ffcc4d;
+}
+
+.subtitle{
+  color:#c9d0df;
+  margin:8px 0 25px;
+  font-size:17px;
+}
+
+.startBtn{
+  width:85%;
+  border:0;
+  padding:17px;
+  border-radius:17px;
+  background:#ffcc4d;
+  color:#10131c;
+  font-size:20px;
+  font-weight:900;
+  box-shadow:0 7px 0 #b47d14;
+}
+
+.tip{
+  margin-top:25px;
+  color:#7f8ba5;
+  font-size:13px;
+}
+
+/* موبايل */
+@media(max-height:650px){
+  .moon{
+    width:65px;
+    height:65px;
+    top:75px;
+  }
+
+  .controls{
+    bottom:10px;
+  }
+
+  .btn{
+    width:58px;
+    height:58px;
+  }
+
+  .jump{
+    width:68px;
+    height:68px;
+  }
 }
 </style>
 </head>
@@ -244,91 +409,187 @@ body{
 
 <div id="game">
 
+  <div class="stars"></div>
+  <div class="moon"></div>
+
   <div class="top">
-    <div class="logo">TRiCKY! 😈</div>
+    <div class="logo">TRiCKY<span>!</span> 😈</div>
     <div class="level">LEVEL <span id="levelNumber">1</span></div>
   </div>
 
-  <div id="world">
+  <div id="camera">
+    <div id="world">
 
-    <div class="platform" style="left:0;bottom:80px;width:330px;height:35px"></div>
-    <div class="platform" style="left:420px;bottom:80px;width:250px;height:35px"></div>
-    <div class="platform" style="left:760px;bottom:150px;width:260px;height:35px"></div>
-    <div class="platform" style="left:1110px;bottom:80px;width:300px;height:35px"></div>
-    <div class="platform" style="left:1480px;bottom:130px;width:250px;height:35px"></div>
+      <!-- الأرض -->
+      <div class="platform"
+           style="left:0;bottom:145px;width:390px;height:42px"></div>
 
-    <div class="spike" style="left:260px;bottom:115px"></div>
-    <div class="spike" style="left:510px;bottom:115px"></div>
-    <div class="spike" style="left:880px;bottom:185px"></div>
-    <div class="spike" style="left:1250px;bottom:115px"></div>
+      <!-- منصة 2 -->
+      <div class="platform"
+           style="left:520px;bottom:145px;width:280px;height:42px"></div>
 
-    <div class="coin" style="left:470px;bottom:155px"></div>
-    <div class="coin" style="left:820px;bottom:225px"></div>
-    <div class="coin" style="left:1200px;bottom:155px"></div>
+      <!-- منصة 3 -->
+      <div class="platform"
+           style="left:920px;bottom:240px;width:300px;height:42px"></div>
 
-    <div class="warning" style="left:210px;bottom:150px">
-      مش كل طريق آمن 👀
+      <!-- منصة 4 -->
+      <div class="platform"
+           style="left:1330px;bottom:145px;width:350px;height:42px"></div>
+
+      <!-- منصة النهاية -->
+      <div class="platform"
+           style="left:1780px;bottom:220px;width:350px;height:42px"></div>
+
+      <!-- الأشواك -->
+      <div class="spike" style="left:315px;bottom:187px"></div>
+      <div class="spike" style="left:350px;bottom:187px"></div>
+
+      <div class="spike" style="left:610px;bottom:187px"></div>
+      <div class="spike" style="left:645px;bottom:187px"></div>
+
+      <div class="spike" style="left:1010px;bottom:282px"></div>
+      <div class="spike" style="left:1045px;bottom:282px"></div>
+
+      <div class="spike" style="left:1510px;bottom:187px"></div>
+      <div class="spike" style="left:1545px;bottom:187px"></div>
+
+      <!-- العملات -->
+      <div class="coin" style="left:575px;bottom:215px"></div>
+      <div class="coin" style="left:965px;bottom:310px"></div>
+      <div class="coin" style="left:1390px;bottom:215px"></div>
+      <div class="coin" style="left:1860px;bottom:290px"></div>
+
+      <!-- خدع -->
+      <div class="trick" style="left:220px;bottom:225px">
+        الطريق ده آمن؟ 👀
+      </div>
+
+      <div class="trick" style="left:690px;bottom:220px">
+        جرّب تقفز 😈
+      </div>
+
+      <div class="trick" style="left:1130px;bottom:330px">
+        متثقش في كل حاجة!
+      </div>
+
+      <!-- الباب -->
+      <div class="door" id="door"
+           style="left:2010px;bottom:262px"></div>
+
+      <div class="goalText"
+           style="left:1980px;bottom:365px">
+        وصل للباب 🚪
+      </div>
+
+      <!-- اللاعب -->
+      <div id="player"
+           style="left:70px;bottom:187px"></div>
+
     </div>
-
-    <div class="door" id="door" style="left:1620px;bottom:165px"></div>
-
-    <div id="player" style="left:60px;bottom:115px"></div>
-
   </div>
 
+  <!-- أزرار -->
   <div class="controls">
 
-    <div class="arrows">
-      <button class="btn" id="right">▶</button>
+    <div class="move">
       <button class="btn" id="left">◀</button>
+      <button class="btn" id="right">▶</button>
     </div>
 
     <button class="btn jump" id="jump">⬆</button>
 
   </div>
 
-  <div id="message">
-    <div class="card">
-      <h1 id="messageTitle">😈</h1>
-      <p id="messageText"></p>
-      <button onclick="restart()">إعادة المحاولة</button>
+  <!-- البداية -->
+  <div id="start">
+
+    <div class="startCard">
+
+      <div class="bigLogo">
+        TRiCKY<span>!</span> 😈
+      </div>
+
+      <div class="subtitle">
+        ماتثقش في أي حاجة... 👀
+      </div>
+
+      <button class="startBtn" onclick="startGame()">
+        ▶ ابدأ اللعب
+      </button>
+
+      <div class="tip">
+        تحرك • اقفز • تجنب الفخاخ • وصل للباب
+      </div>
+
     </div>
+
+  </div>
+
+  <!-- الرسالة -->
+  <div id="message">
+
+    <div class="card">
+
+      <h1 id="messageTitle">💀</h1>
+
+      <p id="messageText">
+        وقعت!
+      </p>
+
+      <button onclick="restart()">
+        🔄 حاول مرة أخرى
+      </button>
+
+    </div>
+
   </div>
 
 </div>
 
 <script>
+
 const player = document.getElementById("player");
 const world = document.getElementById("world");
 const message = document.getElementById("message");
 const messageTitle = document.getElementById("messageTitle");
 const messageText = document.getElementById("messageText");
+const startScreen = document.getElementById("start");
 
-let x = 60;
-let y = 115;
+let x = 70;
+let y = 187;
 
 let vx = 0;
 let vy = 0;
 
-let speed = 4;
-let jumpPower = 12;
+let speed = 5;
+let jumpPower = 14;
+
+let gravity = 0.7;
 
 let onGround = true;
-let gameOver = false;
+let playing = false;
+let dead = false;
 
 const keys = {
   left:false,
   right:false
 };
 
-function setButton(button, key){
+/* التحكم */
 
-  button.addEventListener("touchstart",e=>{
+function buttonControl(button,key){
+
+  button.addEventListener("touchstart",(e)=>{
     e.preventDefault();
     keys[key]=true;
   });
 
-  button.addEventListener("touchend",e=>{
+  button.addEventListener("touchend",(e)=>{
+    e.preventDefault();
+    keys[key]=false;
+  });
+
+  button.addEventListener("touchcancel",(e)=>{
     e.preventDefault();
     keys[key]=false;
   });
@@ -346,17 +607,45 @@ function setButton(button, key){
   });
 }
 
-setButton(document.getElementById("left"),"left");
-setButton(document.getElementById("right"),"right");
+buttonControl(
+  document.getElementById("left"),
+  "left"
+);
 
-document.getElementById("jump").addEventListener("touchstart",e=>{
+buttonControl(
+  document.getElementById("right"),
+  "right"
+);
+
+/* القفز */
+
+function jump(){
+
+  if(
+    playing &&
+    !dead &&
+    onGround
+  ){
+
+    vy = jumpPower;
+    onGround = false;
+
+  }
+
+}
+
+document.getElementById("jump")
+.addEventListener("touchstart",(e)=>{
   e.preventDefault();
   jump();
 });
 
-document.getElementById("jump").addEventListener("mousedown",jump);
+document.getElementById("jump")
+.addEventListener("mousedown",jump);
 
-document.addEventListener("keydown",e=>{
+/* كيبورد */
+
+document.addEventListener("keydown",(e)=>{
 
   if(e.key==="ArrowLeft"){
     keys.left=true;
@@ -366,13 +655,16 @@ document.addEventListener("keydown",e=>{
     keys.right=true;
   }
 
-  if(e.key==="ArrowUp" || e.key===" "){
+  if(
+    e.key==="ArrowUp" ||
+    e.key===" "
+  ){
     jump();
   }
 
 });
 
-document.addEventListener("keyup",e=>{
+document.addEventListener("keyup",(e)=>{
 
   if(e.key==="ArrowLeft"){
     keys.left=false;
@@ -384,115 +676,99 @@ document.addEventListener("keyup",e=>{
 
 });
 
-function jump(){
+/* بداية اللعبة */
 
-  if(onGround && !gameOver){
+function startGame(){
 
-    vy = jumpPower;
-    onGround = false;
+  startScreen.style.display="none";
 
-  }
+  playing=true;
+  dead=false;
 
-}
-
-function showMessage(title,text){
-
-  messageTitle.textContent=title;
-  messageText.textContent=text;
-  message.style.display="flex";
-  gameOver=true;
+  restartPlayer();
 
 }
 
-function restart(){
+/* إعادة اللاعب */
 
-  x=60;
-  y=115;
+function restartPlayer(){
+
+  x=70;
+  y=187;
 
   vx=0;
   vy=0;
 
   onGround=true;
-  gameOver=false;
+
+  dead=false;
 
   message.style.display="none";
 
 }
 
-function update(){
+/* إعادة المحاولة */
 
-  if(gameOver){
-    requestAnimationFrame(update);
-    return;
-  }
+function restart(){
 
-  if(keys.left){
-    vx=-speed;
-  }
-  else if(keys.right){
-    vx=speed;
-  }
-  else{
-    vx*=0.75;
-  }
-
-  x+=vx;
-
-  vy-=0.6;
-  y+=vy;
-
-  if(y<=115){
-
-    y=115;
-    vy=0;
-    onGround=true;
-
-  }
-
-  if(x<0){
-    x=0;
-  }
-
-  if(x>1720){
-    x=1720;
-  }
-
-  player.style.left=x+"px";
-  player.style.bottom=y+"px";
-
-  const cameraX=Math.max(0,Math.min(x-150,900));
-
-  world.style.transform=
-    "translateX(-"+cameraX+"px)";
-
-  checkTraps();
-  checkDoor();
-
-  requestAnimationFrame(update);
+  restartPlayer();
 
 }
 
-function checkTraps(){
+/* موت */
 
-  const traps=[
-    {x:245,y:115,w:35},
-    {x:495,y:115,w:35},
-    {x:865,y:185,w:35},
-    {x:1235,y:115,w:35}
+function die(){
+
+  if(dead)return;
+
+  dead=true;
+
+  messageTitle.textContent="💀 وقعت!";
+
+  messageText.textContent=
+    "الخدعة اشتغلت عليك 😂 حاول مرة تانية.";
+
+  message.style.display="flex";
+
+}
+
+/* الفوز */
+
+function win(){
+
+  if(dead)return;
+
+  dead=true;
+
+  messageTitle.textContent="🎉 أحسنت!";
+
+  messageText.textContent=
+    "وصلت للباب! لكن دي كانت مجرد البداية... 😈";
+
+  message.style.display="flex";
+
+}
+
+/* فحص الأشواك */
+
+function checkSpikes(){
+
+  const spikes=[
+    {x:300,y:187,w:75},
+    {x:595,y:187,w:75},
+    {x:995,y:282,w:75},
+    {x:1495,y:187,w:75}
   ];
 
-  for(const trap of traps){
+  for(const s of spikes){
 
     if(
-      x+30>trap.x &&
-      x<trap.x+trap.w &&
-      Math.abs(y-trap.y)<35
+      x+35>s.x &&
+      x<s.x+s.w &&
+      Math.abs(y-s.y)<45
     ){
 
-      showMessage(
-        "💀 وقعت!",
-        "الخدعة اشتغلت عليك 😂 جرّب طريق تاني."
-      );
+      die();
 
     }
 
@@ -500,23 +776,116 @@ function checkTraps(){
 
 }
 
+/* فحص الباب */
+
 function checkDoor(){
 
   if(
-    x>1580 &&
-    Math.abs(y-165)<60
+    x>1960 &&
+    y>210 &&
+    y<340
   ){
 
-    showMessage(
-      "🎉 أحسنت!",
-      "وصلت للباب! المرحلة الأولى خلصت."
-    );
+    win();
 
   }
 
 }
 
+/* فيزياء */
+
+function update(){
+
+  if(playing && !dead){
+
+    /* الحركة */
+
+    if(keys.left){
+
+      vx=-speed;
+
+    }
+    else if(keys.right){
+
+      vx=speed;
+
+    }
+    else{
+
+      vx*=0.78;
+
+    }
+
+    x+=vx;
+
+    /* الجاذبية */
+
+    vy-=gravity;
+
+    y+=vy;
+
+    /* الأرض */
+
+    if(y<=187){
+
+      y=187;
+
+      vy=0;
+
+      onGround=true;
+
+    }
+
+    /* حدود العالم */
+
+    if(x<0){
+      x=0;
+    }
+
+    if(x>2290){
+      x=2290;
+    }
+
+    /* سقوط */
+
+    if(y<-100){
+
+      die();
+
+    }
+
+    /* تحديث اللاعب */
+
+    player.style.left=x+"px";
+    player.style.bottom=y+"px";
+
+    /* الكاميرا */
+
+    const screenWidth=
+      window.innerWidth;
+
+    const cameraX=Math.max(
+      0,
+      Math.min(
+        x-screenWidth*0.35,
+        2400-screenWidth
+      )
+    );
+
+    world.style.transform=
+      "translateX(-"+cameraX+"px)";
+
+    checkSpikes();
+    checkDoor();
+
+  }
+
+  requestAnimationFrame(update);
+
+}
+
 update();
+
 </script>
 
 </body>
