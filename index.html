@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+<title>TRiCKY!</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+
+body{
+  margin:0;
+  background:#10131c;
+  color:white;
+  font-family:Arial,sans-serif;
+  overflow:hidden;
+  touch-action:none;
+}
+
+#game{
+  position:relative;
+  width:100vw;
+  height:100vh;
+  max-width:900px;
+  margin:auto;
+  overflow:hidden;
+  background:
+    linear-gradient(#252b3d 0%,#171b29 70%,#10131c 70%);
+}
+
+.top{
+  position:absolute;
+  top:12px;
+  left:12px;
+  right:12px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  z-index:20;
+}
+
+.logo{
+  font-size:25px;
+  font-weight:900;
+  letter-spacing:2px;
+}
+
+.level{
+  background:#ffffff18;
+  border:1px solid #ffffff25;
+  padding:8px 14px;
+  border-radius:20px;
+  font-weight:bold;
+}
+
+#world{
+  position:absolute;
+  left:0;
+  top:0;
+  width:1800px;
+  height:100%;
+  transition:transform .08s linear;
+}
+
+.platform{
+  position:absolute;
+  background:#444c62;
+  border-top:5px solid #69748e;
+  border-radius:4px;
+}
+
+.spike{
+  position:absolute;
+  width:0;
+  height:0;
+  border-left:16px solid transparent;
+  border-right:16px solid transparent;
+  border-bottom:30px solid #ef476f;
+}
+
+.coin{
+  position:absolute;
+  width:22px;
+  height:22px;
+  border-radius:50%;
+  background:#ffd166;
+  box-shadow:0 0 15px #ffd16688;
+}
+
+#player{
+  position:absolute;
+  width:34px;
+  height:42px;
+  background:#4cc9f0;
+  border-radius:9px 9px 5px 5px;
+  box-shadow:0 5px 0 #168aad;
+  z-index:10;
+}
+
+#player:before{
+  content:"";
+  position:absolute;
+  width:6px;
+  height:6px;
+  background:#111;
+  border-radius:50%;
+  left:7px;
+  top:11px;
+  box-shadow:14px 0 #111;
+}
+
+#player:after{
+  content:"";
+  position:absolute;
+  width:13px;
+  height:3px;
+  background:#111;
+  left:10px;
+  top:25px;
+  border-radius:5px;
+}
+
+.door{
+  position:absolute;
+  width:55px;
+  height:75px;
+  background:#55d68a;
+  border:5px solid #2b8a57;
+  border-radius:8px 8px 2px 2px;
+  z-index:5;
+}
+
+.door:after{
+  content:"";
+  position:absolute;
+  width:7px;
+  height:7px;
+  background:#183b2b;
+  border-radius:50%;
+  right:8px;
+  top:35px;
+}
+
+.warning{
+  position:absolute;
+  color:#ffdf6b;
+  font-weight:bold;
+  font-size:13px;
+  opacity:.8;
+}
+
+.controls{
+  position:absolute;
+  bottom:22px;
+  left:20px;
+  right:20px;
+  display:flex;
+  justify-content:space-between;
+  align-items:end;
+  z-index:30;
+}
+
+.arrows{
+  display:flex;
+  gap:12px;
+}
+
+.btn{
+  width:65px;
+  height:65px;
+  border:0;
+  border-radius:18px;
+  background:#ffffff18;
+  color:white;
+  font-size:27px;
+  font-weight:bold;
+  border:1px solid #ffffff25;
+  backdrop-filter:blur(8px);
+}
+
+.btn:active{
+  transform:scale(.92);
+  background:#ffffff30;
+}
+
+.jump{
+  width:78px;
+  height:78px;
+  border-radius:50%;
+  background:#4cc9f0;
+  color:#10131c;
+  box-shadow:0 5px 0 #168aad;
+}
+
+#message{
+  position:absolute;
+  inset:0;
+  background:#080a10dd;
+  display:none;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  z-index:100;
+}
+
+.card{
+  width:min(90%,380px);
+  background:#171b29;
+  border:1px solid #ffffff18;
+  border-radius:25px;
+  padding:30px;
+  box-shadow:0 20px 60px #0008;
+}
+
+.card h1{
+  margin:0 0 10px;
+  font-size:34px;
+}
+
+.card p{
+  color:#b8bfd0;
+  line-height:1.7;
+}
+
+.card button{
+  border:0;
+  background:#4cc9f0;
+  padding:14px 30px;
+  border-radius:14px;
+  font-size:17px;
+  font-weight:bold;
+}
+
+@media(min-width:700px){
+  .btn{width:75px;height:75px}
+}
+</style>
+</head>
+
+<body>
+
+<div id="game">
+
+  <div class="top">
+    <div class="logo">TRiCKY! 😈</div>
+    <div class="level">LEVEL <span id="levelNumber">1</span></div>
+  </div>
+
+  <div id="world">
+
+    <div class="platform" style="left:0;bottom:80px;width:330px;height:35px"></div>
+    <div class="platform" style="left:420px;bottom:80px;width:250px;height:35px"></div>
+    <div class="platform" style="left:760px;bottom:150px;width:260px;height:35px"></div>
+    <div class="platform" style="left:1110px;bottom:80px;width:300px;height:35px"></div>
+    <div class="platform" style="left:1480px;bottom:130px;width:250px;height:35px"></div>
+
+    <div class="spike" style="left:260px;bottom:115px"></div>
+    <div class="spike" style="left:510px;bottom:115px"></div>
+    <div class="spike" style="left:880px;bottom:185px"></div>
+    <div class="spike" style="left:1250px;bottom:115px"></div>
+
+    <div class="coin" style="left:470px;bottom:155px"></div>
+    <div class="coin" style="left:820px;bottom:225px"></div>
+    <div class="coin" style="left:1200px;bottom:155px"></div>
+
+    <div class="warning" style="left:210px;bottom:150px">
+      مش كل طريق آمن 👀
+    </div>
+
+    <div class="door" id="door" style="left:1620px;bottom:165px"></div>
+
+    <div id="player" style="left:60px;bottom:115px"></div>
+
+  </div>
+
+  <div class="controls">
+
+    <div class="arrows">
+      <button class="btn" id="right">▶</button>
+      <button class="btn" id="left">◀</button>
+    </div>
+
+    <button class="btn jump" id="jump">⬆</button>
+
+  </div>
+
+  <div id="message">
+    <div class="card">
+      <h1 id="messageTitle">😈</h1>
+      <p id="messageText"></p>
+      <button onclick="restart()">إعادة المحاولة</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const player = document.getElementById("player");
+const world = document.getElementById("world");
+const message = document.getElementById("message");
+const messageTitle = document.getElementById("messageTitle");
+const messageText = document.getElementById("messageText");
+
+let x = 60;
+let y = 115;
+
+let vx = 0;
+let vy = 0;
+
+let speed = 4;
+let jumpPower = 12;
+
+let onGround = true;
+let gameOver = false;
+
+const keys = {
+  left:false,
+  right:false
+};
+
+function setButton(button, key){
+
+  button.addEventListener("touchstart",e=>{
+    e.preventDefault();
+    keys[key]=true;
+  });
+
+  button.addEventListener("touchend",e=>{
+    e.preventDefault();
+    keys[key]=false;
+  });
+
+  button.addEventListener("mousedown",()=>{
+    keys[key]=true;
+  });
+
+  button.addEventListener("mouseup",()=>{
+    keys[key]=false;
+  });
+
+  button.addEventListener("mouseleave",()=>{
+    keys[key]=false;
+  });
+}
+
+setButton(document.getElementById("left"),"left");
+setButton(document.getElementById("right"),"right");
+
+document.getElementById("jump").addEventListener("touchstart",e=>{
+  e.preventDefault();
+  jump();
+});
+
+document.getElementById("jump").addEventListener("mousedown",jump);
+
+document.addEventListener("keydown",e=>{
+
+  if(e.key==="ArrowLeft"){
+    keys.left=true;
+  }
+
+  if(e.key==="ArrowRight"){
+    keys.right=true;
+  }
+
+  if(e.key==="ArrowUp" || e.key===" "){
+    jump();
+  }
+
+});
+
+document.addEventListener("keyup",e=>{
+
+  if(e.key==="ArrowLeft"){
+    keys.left=false;
+  }
+
+  if(e.key==="ArrowRight"){
+    keys.right=false;
+  }
+
+});
+
+function jump(){
+
+  if(onGround && !gameOver){
+
+    vy = jumpPower;
+    onGround = false;
+
+  }
+
+}
+
+function showMessage(title,text){
+
+  messageTitle.textContent=title;
+  messageText.textContent=text;
+  message.style.display="flex";
+  gameOver=true;
+
+}
+
+function restart(){
+
+  x=60;
+  y=115;
+
+  vx=0;
+  vy=0;
+
+  onGround=true;
+  gameOver=false;
+
+  message.style.display="none";
+
+}
+
+function update(){
+
+  if(gameOver){
+    requestAnimationFrame(update);
+    return;
+  }
+
+  if(keys.left){
+    vx=-speed;
+  }
+  else if(keys.right){
+    vx=speed;
+  }
+  else{
+    vx*=0.75;
+  }
+
+  x+=vx;
+
+  vy-=0.6;
+  y+=vy;
+
+  if(y<=115){
+
+    y=115;
+    vy=0;
+    onGround=true;
+
+  }
+
+  if(x<0){
+    x=0;
+  }
+
+  if(x>1720){
+    x=1720;
+  }
+
+  player.style.left=x+"px";
+  player.style.bottom=y+"px";
+
+  const cameraX=Math.max(0,Math.min(x-150,900));
+
+  world.style.transform=
+    "translateX(-"+cameraX+"px)";
+
+  checkTraps();
+  checkDoor();
+
+  requestAnimationFrame(update);
+
+}
+
+function checkTraps(){
+
+  const traps=[
+    {x:245,y:115,w:35},
+    {x:495,y:115,w:35},
+    {x:865,y:185,w:35},
+    {x:1235,y:115,w:35}
+  ];
+
+  for(const trap of traps){
+
+    if(
+      x+30>trap.x &&
+      x<trap.x+trap.w &&
+      Math.abs(y-trap.y)<35
+    ){
+
+      showMessage(
+        "💀 وقعت!",
+        "الخدعة اشتغلت عليك 😂 جرّب طريق تاني."
+      );
+
+    }
+
+  }
+
+}
+
+function checkDoor(){
+
+  if(
+    x>1580 &&
+    Math.abs(y-165)<60
+  ){
+
+    showMessage(
+      "🎉 أحسنت!",
+      "وصلت للباب! المرحلة الأولى خلصت."
+    );
+
+  }
+
+}
+
+update();
+</script>
+
+</body>
+  </html>
